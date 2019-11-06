@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+
+message Request {
+   string branch = 1;
+   string RFW_ID = 7;
+   string workload_metric = 2;
+   int32 batch_unit = 3;
+   int32 batch_id = 4;
+   int32 batch_size = 5;
+   string dataset_type = 6;
+}
+
+
+
+message Response {
+   int32 last_batch_ID = 2;
+   string RFW_ID = 1;
+   string workload_metrics = 3;
+   repeated Innertype workload_data = 4;
+}
+
+message Innertype{
+   repeated int32 workload_data = 1[packed=true];
+}
+
+
+
+
+
+
