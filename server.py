@@ -22,7 +22,7 @@ def getCol(value):
 
 
 @app.route('/v1/batches/json', methods=['POST'])
-# 默认用Json去解析
+# use json
 def receive_json_request():
     print("json request received")
     parser = reqparse.RequestParser()
@@ -42,7 +42,7 @@ def receive_json_request():
 
 
 @app.route('/v1/batches/proto', methods=['POST','GET'])
-# proto去解析
+# use proto
 def receive_proto_request():
     print("receive proto request")
     reqs = dataCommunication_pb2.Request()
