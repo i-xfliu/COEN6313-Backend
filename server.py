@@ -189,4 +189,4 @@ def after_request(resp):
 app.after_request(after_request)
 
 if __name__ == '__main__':
-    app.run(host:'https://nth-autumn-258121.appspot.com/', debug=True)
+    app.run(host='https://nth-autumn-258121.appspot.com/', debug=True)
