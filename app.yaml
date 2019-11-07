@@ -1,1 +1,11 @@
-runtime: python37
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: server.app
+
+libraries:
+- name: flask
+  version: 1.1.1
