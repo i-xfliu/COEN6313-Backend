@@ -28,7 +28,6 @@ def receive_json_request():
     parser = reqparse.RequestParser()
     parser.add_argument('branch', type=str)
     parser.add_argument('datasetType', type=str)
-    # 一次取得数量，多少个bench也要根据这个来定
     parser.add_argument('workloadMetric', type=str)
     parser.add_argument('batchUnit', type=int)
     parser.add_argument('batchId', type=int)
