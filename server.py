@@ -22,12 +22,12 @@ def getCol(value):
 
 
 @app.route('/v1/batches/json', methods=['POST'])
-# use json
 def receive_json_request():
     print("json request received")
     parser = reqparse.RequestParser()
     parser.add_argument('branch', type=str)
     parser.add_argument('datasetType', type=str)
+    # 一次取得数量，多少个bench也要根据这个来定
     parser.add_argument('workloadMetric', type=str)
     parser.add_argument('batchUnit', type=int)
     parser.add_argument('batchId', type=int)
@@ -41,7 +41,7 @@ def receive_json_request():
 
 
 @app.route('/v1/batches/proto', methods=['POST','GET'])
-# use proto
+# proto去解析
 def receive_proto_request():
     print("receive proto request")
     reqs = dataCommunication_pb2.Request()
@@ -83,16 +83,19 @@ def _getDataFrame(reqs):
     for chunk in reader:
         chunk_list.append(chunk)
     count = 0;
+    last_batch_size = 0;
     while count < batchSize:
         count += 1
-        next_str = '[{}]'.format(chunk_list[batchID + count].to_json(orient="values", force_ascii=False).replace('[', '').\
-            replace(']',''))
-        print("Slice: ", next_str)
+        next_str = chunk_list[batchID + count].to_json(orient="values", force_ascii=False).replace('[', '').\
+            replace(']','')
+        if count == batchSize-1:
+           last_batch_size = chunk_list[batchID + count].shape[0]
+        print("last batch size: ", last_batch_size)
         chunk_str = '{},{}'.format(chunk_str,next_str)
         new_str = chunk_str[1:]
         print("After Refactor: ", new_str)
         chunk_json = eval(new_str)
-    return to_json(batchID, metric, chunk_json)
+    return to_json_for_pb(batchID + count-1, last_batch_size,metric, chunk_json)
 
 def request_analy_json(args):
     if args.get('RFWID') != RFW:
@@ -171,6 +174,13 @@ def request_analy_json(args):
 #     }
 # }
 
+def to_json_for_pb(batch_id, last_batch_size, metrics, chunk_str):
+    before_json = {
+        'last_batch_ID': batch_id, 'last_batch_size': last_batch_size, 'RFW_ID': RFW, 'workload_metrics': metrics, 'workload_data': chunk_str
+    }
+    print('After Jsonify: ', json.dumps(before_json))
+    return json.dumps(before_json)
+
 def to_json(batch_id, metrics, chunk_str):
     before_json = {
         'last_batch_ID': batch_id, 'RFW_ID': RFW, 'workload_metrics': metrics, 'workload_data': chunk_str
@@ -189,4 +199,4 @@ def after_request(resp):
 app.after_request(after_request)
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0',port=5000, debug=True)
