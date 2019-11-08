@@ -189,4 +189,4 @@ def after_request(resp):
 app.after_request(after_request)
 
 if __name__ == '__main__':
-    app.run(host='35.203.45.84',port=5000, debug=True)
+    app.run(port=5000, debug=True)
