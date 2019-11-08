@@ -17,15 +17,7 @@ message Response {
    int32 last_batch_ID = 2;
    string RFW_ID = 1;
    string workload_metrics = 3;
-   repeated Innertype workload_data = 4;
+   repeated int32 workload_data = 4;
+   int32 last_batch_size = 5;
+   int32 batch_amount = 6;
 }
-
-message Innertype{
-   repeated int32 workload_data = 1[packed=true];
-}
-
-
-
-
-
-
