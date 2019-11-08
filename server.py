@@ -95,7 +95,7 @@ def _getDataFrame(reqs):
         new_str = chunk_str[1:]
         print("After Refactor: ", new_str)
         chunk_json = eval(new_str)
-    return to_json_for_pb(batchID + count-1, last_batch_size,metric, chunk_json)
+    return to_json_for_pb(batchSize,batchID + count-1, last_batch_size,metric, chunk_json)
 
 def request_analy_json(args):
     if args.get('RFWID') != RFW:
@@ -129,6 +129,8 @@ def request_analy_json(args):
         print("Slice: ", next_str)
         chunk_str = '{},{}'.format(chunk_str,next_str)
         new_str = chunk_str[1:]
+        if batchSize ==1:
+           new_str = '[{}]'.format(new_str)
         print("After Refactor: ", new_str)
         chunk_json = eval(new_str)
     return to_json(batchID, metric, chunk_json)
@@ -174,9 +176,9 @@ def request_analy_json(args):
 #     }
 # }
 
-def to_json_for_pb(batch_id, last_batch_size, metrics, chunk_str):
+def to_json_for_pb(batchSize,batch_id, last_batch_size, metrics, chunk_str):
     before_json = {
-        'last_batch_ID': batch_id, 'last_batch_size': last_batch_size, 'RFW_ID': RFW, 'workload_metrics': metrics, 'workload_data': chunk_str
+        'last_batch_ID': batch_id, 'batch_amount':batchSize,'last_batch_size': last_batch_size, 'RFW_ID': RFW, 'workload_metrics': metrics, 'workload_data': chunk_str
     }
     print('After Jsonify: ', json.dumps(before_json))
     return json.dumps(before_json)
@@ -199,4 +201,4 @@ def after_request(resp):
 app.after_request(after_request)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
