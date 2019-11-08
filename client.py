@@ -1,3 +1,4 @@
+import json
 
 import requests
 from google.protobuf.json_format import MessageToJson
@@ -19,8 +20,12 @@ headers = {
         'Content-Type': 'application/x-protobuf'
     }
 
-result = requests.post("http://127.0.0.1:4800/v1/batches/proto", data = payload, headers=headers)
+result = requests.post("http://127.0.0.1:5000/v1/batches/proto", data = payload, headers=headers)
 res = dataCommunication_pb2.Response()
 request2 = dataCommunication_pb2.Request()
 res.ParseFromString(result.content)
-print(MessageToJson(res))
+j = MessageToJson(res)
+sValue = json.loads(j)
+for k in sValue.keys():
+  if str(type(sValue[k]))!="<class 'dict'>":
+    print(k+':'+ str(sValue[k]))
